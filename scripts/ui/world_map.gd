@@ -1,4 +1,5 @@
 extends Control
+class_name WorldMapView
 signal cell_selected(x: int,y: int)
 var chunks: Array[Dictionary] = []
 var center_x := 0
