@@ -23,7 +23,7 @@ func _claim_reward(q: Dictionary) -> void:
 	Game.statistics.gold_earned += int(q.reward_gold)
 	Game.gain_xp(int(q.reward_xp))
 func serialize() -> Dictionary:
-	return {"quests":quests}
+	return {"quests":quests.duplicate(true)}
 func apply_save(data: Dictionary) -> void:
 	var loaded: Variant = data.get("quests",null)
 	if loaded is Array:
