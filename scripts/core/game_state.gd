@@ -44,8 +44,23 @@ func serialize() -> Dictionary:
 	return {"version":SAVE_VERSION,"world_seed":world_seed,"player":player.duplicate(true),"discovered_chunks":discovered_chunks.duplicate(true),"poi_states":poi_states.duplicate(true),"journal":journal.duplicate(true),"active_combat":active_combat.duplicate(true),"defeated_poi":defeated_poi.duplicate(true),"statistics":statistics.duplicate(true),"inventory":Inventory.serialize(),"quests":Quests.serialize()}
 func apply_save(data: Dictionary) -> bool:
 	if int(data.get("version",-1)) != SAVE_VERSION: return false
-	if not (data.get("player",null) is Dictionary): return false
-	player = data.player
+	var loaded_player: Variant = data.get("player",null)
+	if not (loaded_player is Dictionary): return false
+	for required_key in ["level","xp","xp_next","hp","hp_max","mana","mana_max","strength","agility","vitality","intellect","gold","chunk_x","chunk_y"]:
+		if not loaded_player.has(required_key): return false
+	for dictionary_key in ["discovered_chunks","poi_states","active_combat","defeated_poi","statistics","inventory","quests"]:
+		if not (data.get(dictionary_key,{}) is Dictionary): return false
+	if not (data.get("journal",[]) is Array): return false
+	player = loaded_player.duplicate(true)
+	player.level = maxi(1,int(player.level))
+	player.xp = maxi(0,int(player.xp))
+	player.xp_next = maxi(1,int(player.xp_next))
+	player.hp_max = maxi(1,int(player.hp_max))
+	player.hp = clampi(int(player.hp),0,int(player.hp_max))
+	player.mana_max = maxi(0,int(player.mana_max))
+	player.mana = clampi(int(player.mana),0,int(player.mana_max))
+	player.gold = maxi(0,int(player.gold))
+	player.stat_points = maxi(0,int(player.get("stat_points",0)))
 	world_seed = int(data.get("world_seed",world_seed))
 	discovered_chunks = data.get("discovered_chunks",{})
 	poi_states = data.get("poi_states",{})
