@@ -10,8 +10,19 @@
     "id": "iron_sword",
     "name": "Железный меч",
     "kind": "weapon",
+    "slot": "weapon",
     "count": 1,
-    "value": 28
+    "value": 28,
+    "damage_bonus": 5
+  },
+  {
+    "id": "leather_armor",
+    "name": "Кожаный доспех",
+    "kind": "armor",
+    "slot": "armor",
+    "count": 1,
+    "value": 24,
+    "defense_bonus": 2
   },
   {
     "id": "herb",
