@@ -238,7 +238,7 @@ func _scout(poi: Dictionary,chunk: Dictionary) -> void:
 	_show_poi(chunk)
 
 func _bypass(poi: Dictionary,chunk: Dictionary) -> void:
-	Game.poi_states[poi.id] = true
+	Game.poi_states[poi.id] = "bypassed"
 	Game.add_journal("Исследование","Вы обошли опасное место стороной.")
 	_show_poi(chunk)
 
