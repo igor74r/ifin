@@ -1,0 +1,32 @@
+[
+  {
+    "id": "camp",
+    "name": "Лагерь разбойников",
+    "action": "combat",
+    "glyph": "⚔"
+  },
+  {
+    "id": "cache",
+    "name": "Старый тайник",
+    "action": "loot",
+    "glyph": "◆"
+  },
+  {
+    "id": "shrine",
+    "name": "Древнее святилище",
+    "action": "shrine",
+    "glyph": "✧"
+  },
+  {
+    "id": "trader",
+    "name": "Странствующий торговец",
+    "action": "trade",
+    "glyph": "$"
+  },
+  {
+    "id": "ruins",
+    "name": "Забытые руины",
+    "action": "combat",
+    "glyph": "▣"
+  }
+]
