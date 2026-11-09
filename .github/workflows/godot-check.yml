@@ -5,8 +5,13 @@ on:
     branches: [main]
   workflow_dispatch:
 
+concurrency:
+  group: godot-validation-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   validate:
+    timeout-minutes: 15
     runs-on: ubuntu-latest
     container:
       image: barichello/godot-ci:4.3
