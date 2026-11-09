@@ -261,7 +261,7 @@ func _claim_cache(poi: Dictionary,chunk: Dictionary) -> void:
 func _use_shrine(poi: Dictionary,chunk: Dictionary) -> void:
 	Game.player.hp = Game.player.hp_max
 	Game.player.mana = Game.player.mana_max
-	Game.poi_states[poi.id] = true
+	Game.poi_states[poi.id] = "completed"
 	Game.gain_xp(25)
 	Game.add_journal("Святилище","Алтарь восстановил силы и даровал опыт.")
 	_refresh_all()
