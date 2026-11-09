@@ -7,6 +7,7 @@ var center_y := 0
 var cell_size := 82.0
 var offset := Vector2.ZERO
 var drag_origin := Vector2.ZERO
+var press_position := Vector2.ZERO
 var dragging := false
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_STOP
