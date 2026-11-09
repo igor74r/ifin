@@ -43,34 +43,80 @@ func gain_xp(amount: int) -> void:
 func serialize() -> Dictionary:
 	return {"version":SAVE_VERSION,"world_seed":world_seed,"player":player.duplicate(true),"discovered_chunks":discovered_chunks.duplicate(true),"poi_states":poi_states.duplicate(true),"journal":journal.duplicate(true),"active_combat":active_combat.duplicate(true),"defeated_poi":defeated_poi.duplicate(true),"statistics":statistics.duplicate(true),"inventory":Inventory.serialize(),"quests":Quests.serialize()}
 func apply_save(data: Dictionary) -> bool:
-	if int(data.get("version",-1)) != SAVE_VERSION: return false
-	var loaded_player: Variant = data.get("player",null)
-	if not (loaded_player is Dictionary): return false
-	for required_key in ["level","xp","xp_next","hp","hp_max","mana","mana_max","strength","agility","vitality","intellect","gold","chunk_x","chunk_y"]:
-		if not loaded_player.has(required_key): return false
-	for dictionary_key in ["discovered_chunks","poi_states","active_combat","defeated_poi","statistics","inventory","quests"]:
-		if not (data.get(dictionary_key,{}) is Dictionary): return false
-	if not (data.get("journal",[]) is Array): return false
+	if int(data.get("version", -1)) != SAVE_VERSION:
+		return false
+	var loaded_player: Variant = data.get("player", null)
+	if not (loaded_player is Dictionary):
+		return false
+	for required_key in ["level", "xp", "xp_next", "hp", "hp_max", "mana", "mana_max", "strength", "agility", "vitality", "intellect", "gold", "chunk_x", "chunk_y"]:
+		if not loaded_player.has(required_key):
+			return false
+	for dictionary_key in ["discovered_chunks", "poi_states", "active_combat", "defeated_poi", "statistics", "inventory", "quests"]:
+		if not (data.get(dictionary_key, {}) is Dictionary):
+			return false
+	if not (data.get("journal", []) is Array):
+		return false
+
 	player = loaded_player.duplicate(true)
-	player.level = maxi(1,int(player.level))
-	player.xp = maxi(0,int(player.xp))
-	player.xp_next = maxi(1,int(player.xp_next))
-	player.hp_max = maxi(1,int(player.hp_max))
-	player.hp = clampi(int(player.hp),0,int(player.hp_max))
-	player.mana_max = maxi(0,int(player.mana_max))
-	player.mana = clampi(int(player.mana),0,int(player.mana_max))
-	player.gold = maxi(0,int(player.gold))
-	player.stat_points = maxi(0,int(player.get("stat_points",0)))
-	world_seed = int(data.get("world_seed",world_seed))
-	discovered_chunks = data.get("discovered_chunks",{})
-	poi_states = data.get("poi_states",{})
-	active_combat = data.get("active_combat",{})
+	player.name = str(player.get("name", "Странник")).substr(0, 40)
+	player.level = clampi(int(player.level), 1, 1000000)
+	player.xp = clampi(int(player.xp), 0, 1000000000)
+	player.xp_next = clampi(int(player.xp_next), 1, 1000000000)
+	player.hp_max = clampi(int(player.hp_max), 1, 1000000)
+	player.hp = clampi(int(player.hp), 0, int(player.hp_max))
+	player.mana_max = clampi(int(player.mana_max), 0, 1000000)
+	player.mana = clampi(int(player.mana), 0, int(player.mana_max))
+	player.gold = clampi(int(player.gold), 0, 1000000000)
+	player.stat_points = clampi(int(player.get("stat_points", 0)), 0, 1000000)
+	for stat in ["strength", "agility", "vitality", "intellect"]:
+		player[stat] = clampi(int(player[stat]), 0, 1000000)
+	player.chunk_x = clampi(int(player.chunk_x), -1000000000, 1000000000)
+	player.chunk_y = clampi(int(player.chunk_y), -1000000000, 1000000000)
+
+	world_seed = int(data.get("world_seed", world_seed))
+	discovered_chunks.clear()
+	for key in data.discovered_chunks:
+		if data.discovered_chunks[key] == true and discovered_chunks.size() < 100000:
+			discovered_chunks[str(key)] = true
+	poi_states.clear()
+	for key in data.poi_states:
+		var state := str(data.poi_states[key])
+		if state in ["scouted", "completed", "bypassed"]:
+			poi_states[str(key)] = state
+	defeated_poi.clear()
+	for key in data.defeated_poi:
+		if data.defeated_poi[key] == true:
+			defeated_poi[str(key)] = true
+
+	active_combat.clear()
+	var loaded_combat: Dictionary = data.active_combat
+	if loaded_combat.get("active", false) and str(loaded_combat.get("poi_id", "")).is_empty() == false:
+		var enemy_hp := clampi(int(loaded_combat.get("enemy_hp", 0)), 1, 1000000)
+		active_combat = {
+			"active": true,
+			"poi_id": str(loaded_combat.get("poi_id", "")),
+			"enemy_name": str(loaded_combat.get("enemy_name", "Противник")).substr(0, 80),
+			"enemy_hp": enemy_hp,
+			"enemy_hp_max": clampi(int(loaded_combat.get("enemy_hp_max", enemy_hp)), enemy_hp, 1000000),
+			"enemy_attack": clampi(int(loaded_combat.get("enemy_attack", 1)), 1, 100000),
+			"round": clampi(int(loaded_combat.get("round", 1)), 1, 1000000),
+			"reward": clampi(int(loaded_combat.get("reward", 0)), 0, 1000000000)
+		}
+
 	journal.clear()
-	for entry in data.get("journal",[]):
-		if entry is Dictionary: journal.append(entry)
-	defeated_poi = data.get("defeated_poi",{})
-	statistics = data.get("statistics",statistics)
-	Inventory.apply_save(data.get("inventory",{}))
-	Quests.apply_save(data.get("quests",{}))
+	for entry in data.get("journal", []):
+		if entry is Dictionary and journal.size() < int(settings.journal_limit):
+			journal.append({
+				"time": str(entry.get("time", "")).substr(0, 40),
+				"category": str(entry.get("category", "")).substr(0, 40),
+				"message": str(entry.get("message", "")).substr(0, 1000)
+			})
+	statistics = {"kills": 0, "discoveries": discovered_chunks.size(), "gold_earned": 0, "steps": 0}
+	var loaded_statistics: Dictionary = data.statistics
+	for stat_key in statistics:
+		statistics[stat_key] = clampi(int(loaded_statistics.get(stat_key, statistics[stat_key])), 0, 1000000000)
+	Inventory.apply_save(data.inventory)
+	Quests.apply_save(data.quests)
 	Events.state_changed.emit()
+	Events.combat_changed.emit(active_combat.get("active", false))
 	return true
