@@ -7,7 +7,15 @@ func save_game() -> bool:
 	f.store_string(JSON.stringify(Game.serialize()))
 	f.flush()
 	f.close()
-	if FileAccess.file_exists(SAVE_PATH): DirAccess.copy_absolute(SAVE_PATH,BACKUP_PATH)
+	if FileAccess.file_exists(SAVE_PATH):
+		var backup_error := DirAccess.copy_absolute(SAVE_PATH,BACKUP_PATH)
+		if backup_error != OK:
+			Events.publish("Сохранение","Не удалось создать резервную копию; основное сохранение оставлено без изменений.")
+			return false
+		var remove_error := DirAccess.remove_absolute(SAVE_PATH)
+		if remove_error != OK:
+			Events.publish("Сохранение","Не удалось заменить старое сохранение.")
+			return false
 	var err := DirAccess.rename_absolute(SAVE_PATH+".tmp",SAVE_PATH)
 	if err != OK: Events.publish("Сохранение","Ошибка записи: %s." % error_string(err)); return false
 	Events.publish("Сохранение","Игра сохранена.")
