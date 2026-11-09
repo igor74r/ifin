@@ -51,9 +51,12 @@ func _gui_input(event: InputEvent) -> void:
 		if event.button_index == MOUSE_BUTTON_WHEEL_UP and event.pressed: cell_size = minf(120,cell_size*1.12); queue_redraw()
 		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN and event.pressed: cell_size = maxf(48,cell_size/1.12); queue_redraw()
 		elif event.button_index == MOUSE_BUTTON_LEFT:
-			if event.pressed: dragging = true; drag_origin = event.position-offset
+			if event.pressed:
+				dragging = true
+				press_position = event.position
+				drag_origin = event.position-offset
 			else:
-				if dragging and (event.position-(drag_origin+offset)).length() < 7:
+				if dragging and (event.position-press_position).length() < 7.0:
 					var local := event.position-(size/2.0+offset)
 					cell_selected.emit(center_x+roundi(local.x/cell_size),center_y+roundi(local.y/cell_size))
 				dragging = false
