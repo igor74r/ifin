@@ -1,0 +1,23 @@
+[
+  {
+    "id": "potion_small",
+    "name": "Малое зелье",
+    "kind": "consumable",
+    "count": 2,
+    "value": 12
+  },
+  {
+    "id": "iron_sword",
+    "name": "Железный меч",
+    "kind": "weapon",
+    "count": 1,
+    "value": 28
+  },
+  {
+    "id": "herb",
+    "name": "Лесная трава",
+    "kind": "material",
+    "count": 3,
+    "value": 4
+  }
+]
