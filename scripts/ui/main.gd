@@ -233,7 +233,7 @@ func _show_poi(chunk: Dictionary) -> void:
 		"trade": _add_action("Купить зелье (12 золота)",_buy_potion.bind(poi,chunk))
 
 func _scout(poi: Dictionary,chunk: Dictionary) -> void:
-	Game.poi_states[poi.id] = true
+	Game.poi_states[poi.id] = "scouted"
 	Game.add_journal("Разведка","Вы изучили расположение противника.")
 	_show_poi(chunk)
 
