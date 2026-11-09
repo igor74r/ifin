@@ -49,6 +49,7 @@ func apply_save(data: Dictionary) -> bool:
 	world_seed = int(data.get("world_seed",world_seed))
 	discovered_chunks = data.get("discovered_chunks",{})
 	poi_states = data.get("poi_states",{})
+	active_combat = data.get("active_combat",{})
 	journal.clear()
 	for entry in data.get("journal",[]):
 		if entry is Dictionary: journal.append(entry)
