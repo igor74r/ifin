@@ -1,0 +1,23 @@
+config_version=5
+[application]
+config/name="Infinite World RPG"
+run/main_scene="res://scenes/main/main.tscn"
+config/features=PackedStringArray("4.2", "GL Compatibility")
+[display]
+window/size/viewport_width=1440
+window/size/viewport_height=900
+window/size/window_width_override=1440
+window/size/window_height_override=900
+window/stretch/mode="canvas_items"
+[rendering]
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+environment/defaults/default_clear_color=Color(0.035, 0.045, 0.06, 1)
+[autoload]
+Events="*res://scripts/core/event_bus.gd"
+Game="*res://scripts/core/game_state.gd"
+WorldGen="*res://scripts/world/world_generator.gd"
+Inventory="*res://scripts/inventory/inventory_service.gd"
+Combat="*res://scripts/combat/combat_service.gd"
+Quests="*res://scripts/quests/quest_service.gd"
+Saves="*res://scripts/save/save_service.gd"
