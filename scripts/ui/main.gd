@@ -145,25 +145,37 @@ func _refresh_detail() -> void:
 			_add_text("Здоровье: %d/%d · Мана: %d/%d" % [Game.player.hp,Game.player.hp_max,Game.player.mana,Game.player.mana_max])
 			_add_text("Золото: %d · Координаты: %d, %d" % [Game.player.gold,Game.player.chunk_x,Game.player.chunk_y])
 			if Game.player.stat_points > 0:
-				_add_action("Усилить силу (+1)",_spend_strength)
+				_add_action("Распределить очки характеристик",_open_tab.bind("Характеристики"))
 		"Характеристики":
-			for stat in ["strength","agility","vitality","intellect"]:
-				_add_text("%s: %d" % [stat,Game.player[stat]])
+			var stat_names := {"strength":"Сила","agility":"Ловкость","vitality":"Выносливость","intellect":"Интеллект"}
 			_add_text("Очки развития: %d" % Game.player.stat_points)
-			_add_text("Урон базовой атаки: %d" % maxi(1,int(Game.player.strength)*2+int(Game.player.level)-3))
+			for stat in ["strength","agility","vitality","intellect"]:
+				_add_text("%s: %d" % [stat_names[stat],Game.player[stat]])
+				if Game.player.stat_points > 0:
+					_add_action("Увеличить %s (+1)" % stat_names[stat],_spend_stat.bind(stat))
+			_add_text("Урон: %d · Броня: %d" % [maxi(1,int(Game.player.strength)*2+int(Game.player.level)-3+Inventory.get_equipment_bonus("damage_bonus")),Inventory.get_equipment_bonus("defense_bonus")])
 		"Инвентарь":
+			_add_text("Экипировка: %s · %s" % [str(Inventory.equipped.get("weapon","нет оружия")),str(Inventory.equipped.get("armor","нет брони"))])
 			for item in Inventory.items:
 				var row := HBoxContainer.new()
 				var label := Label.new()
-				label.text = "%s ×%d" % [item.name,item.count]
+				var slot := str(item.get("slot",""))
+				var is_equipped := not slot.is_empty() and str(Inventory.equipped.get(slot,"")) == str(item.get("id",""))
+				label.text = "%s ×%d%s" % [item.name,item.count," · надето" if is_equipped else ""]
 				label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 				row.add_child(label)
+				if not slot.is_empty():
+					var equip := Button.new()
+					equip.text = "Снять" if is_equipped else "Надеть"
+					equip.pressed.connect(_toggle_equipment.bind(str(item.id),slot,is_equipped))
+					row.add_child(equip)
 				if item.id == "potion_small":
 					var use := Button.new()
 					use.text = "Использовать"
 					use.pressed.connect(_use_potion)
 					row.add_child(use)
 				detail_box.add_child(row)
+			_add_text("Бонусы экипировки: урон +%d, защита +%d." % [Inventory.get_equipment_bonus("damage_bonus"),Inventory.get_equipment_bonus("defense_bonus")])
 		"Квесты":
 			for quest in Quests.quests:
 				_add_text("%s — %s (%d/%d)" % [quest.title,quest.status,quest.progress,quest.target])
@@ -300,11 +312,27 @@ func _combat_flee() -> void:
 	_show_message(result.message)
 	_refresh_all()
 
-func _spend_strength() -> void:
-	if Game.player.stat_points <= 0: return
-	Game.player.strength += 1
+func _spend_stat(stat: String) -> void:
+	if Game.player.stat_points <= 0 or stat not in ["strength","agility","vitality","intellect"]:
+		return
+	Game.player[stat] = int(Game.player[stat]) + 1
 	Game.player.stat_points -= 1
-	Game.add_journal("Развитие","Сила увеличена.")
+	if stat == "vitality":
+		Game.player.hp_max += 5
+		Game.player.hp = mini(int(Game.player.hp_max),int(Game.player.hp) + 5)
+	elif stat == "intellect":
+		Game.player.mana_max += 5
+		Game.player.mana = mini(int(Game.player.mana_max),int(Game.player.mana) + 5)
+	Game.add_journal("Развитие","Характеристика %s увеличена на 1." % stat)
+	_refresh_all()
+
+func _toggle_equipment(item_id: String, slot: String, is_equipped: bool) -> void:
+	if is_equipped:
+		Inventory.unequip_slot(slot)
+	else:
+		var result: Dictionary = Inventory.equip_item(item_id)
+		_show_message(str(result.get("message","")))
+	Events.state_changed.emit()
 	_refresh_all()
 
 func _use_potion() -> void:
