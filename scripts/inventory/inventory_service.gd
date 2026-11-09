@@ -1,5 +1,8 @@
 extends Node
 var items: Array[Dictionary] = [{"id":"potion_small","name":"Малое зелье","kind":"consumable","count":2,"value":12},{"id":"iron_sword","name":"Железный меч","kind":"weapon","count":1,"value":28},{"id":"herb","name":"Лесная трава","kind":"material","count":3,"value":4}]
+func _ready() -> void:
+	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string("res://data/items/items.json"))
+	if parsed is Array and not parsed.is_empty(): items = parsed
 func add_item(id: String,name: String,kind: String,count: int,value: int) -> bool:
 	if id.is_empty() or count <= 0: return false
 	for item in items:
