@@ -65,6 +65,15 @@ func _run() -> void:
 	if not encounter.get("ok", false):
 		errors.append("Combat encounter did not start.")
 	else:
+		var mana_before: int = Game.player.mana
+		var enemy_hp_before: int = int(Game.active_combat.enemy_hp)
+		var ability_result := Combat.use_power_strike()
+		if not ability_result.get("ok", false):
+			errors.append("Power strike failed despite sufficient mana.")
+		if Game.player.mana != mana_before - 10:
+			errors.append("Power strike mana cost was not applied.")
+		if Game.active_combat.get("active", false) and int(Game.active_combat.enemy_hp) >= enemy_hp_before:
+			errors.append("Power strike did not damage the enemy.")
 		var hp_before: int = Game.player.hp
 		var defense_result := Combat.defend()
 		if not defense_result.get("ok", false):
