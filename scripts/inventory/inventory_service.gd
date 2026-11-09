@@ -30,7 +30,7 @@ func use_potion() -> String:
 	Events.publish("Предметы","Использовано зелье: восстановлено здоровья %d." % restored)
 	return "Восстановлено здоровья: %d." % restored
 func serialize() -> Dictionary:
-	return {"items":items}
+	return {"items":items.duplicate(true)}
 func apply_save(data: Dictionary) -> void:
 	var loaded: Variant = data.get("items",null)
 	if loaded is Array:
