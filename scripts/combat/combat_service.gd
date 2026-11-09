@@ -34,6 +34,23 @@ func player_attack() -> Dictionary:
 	Game.active_combat = combat
 	return _enemy_turn(1.0, "Противник ранен. Его здоровье: %d." % int(combat.enemy_hp))
 
+func use_power_strike() -> Dictionary:
+	if not Game.active_combat.get("active", false):
+		return {"ok": false, "message": "Сейчас нет активного боя."}
+	var mana_cost := 10
+	if int(Game.player.mana) < mana_cost:
+		return {"ok": false, "message": "Недостаточно маны для силового удара."}
+	Game.player.mana -= mana_cost
+	var combat: Dictionary = Game.active_combat
+	var base_damage := maxi(1, int(Game.player.strength) * 2 + int(Game.player.level) - 3 + Inventory.get_equipment_bonus("damage_bonus"))
+	var damage := base_damage * 2 + int(Game.player.intellect)
+	combat.enemy_hp = maxi(0, int(combat.enemy_hp) - damage)
+	Events.publish("Способность", "Силовой удар наносит %d урона. Потрачено %d маны." % [damage, mana_cost])
+	if int(combat.enemy_hp) <= 0:
+		return _win()
+	Game.active_combat = combat
+	return _enemy_turn(1.0, "Силовой удар пробил защиту противника. Его здоровье: %d." % int(combat.enemy_hp))
+
 func defend() -> Dictionary:
 	if not Game.active_combat.get("active", false):
 		return {"ok": false, "message": "Сейчас нет активного боя."}
