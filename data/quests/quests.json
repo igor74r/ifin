@@ -1,0 +1,13 @@
+[
+  {
+    "id": "first_hunt",
+    "title": "Первая охота",
+    "description": "Победите одного противника в любой точке мира.",
+    "target": 1,
+    "progress": 0,
+    "status": "active",
+    "reward_xp": 60,
+    "reward_gold": 25,
+    "claimed": false
+  }
+]
