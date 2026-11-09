@@ -31,7 +31,8 @@ func _draw() -> void:
 		if Game.discovered_chunks.has(c.key):
 			draw_string(ThemeDB.fallback_font,rect.position+Vector2(5,20),str(c.biome.name),HORIZONTAL_ALIGNMENT_LEFT,rect.size.x-8,10,Color("#e6edf3"))
 			if not c.poi.is_empty():
-				var done := Game.defeated_poi.has(c.poi.id) or bool(Game.poi_states.get(c.poi.id,false))
+				var poi_status: String = str(Game.poi_states.get(c.poi.id,""))
+				var done := Game.defeated_poi.has(c.poi.id) or poi_status in ["completed","bypassed"]
 				draw_string(ThemeDB.fallback_font,rect.position+Vector2(25,52),"✓" if done else str(c.poi.glyph),HORIZONTAL_ALIGNMENT_LEFT,24,20,Color("#ffffff"))
 		if dx == 0 and dy == 0: draw_rect(rect.grow(2),Color("#f4c76b"),false,3)
 	draw_circle(origin,5,Color.WHITE)
