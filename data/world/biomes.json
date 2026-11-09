@@ -1,0 +1,44 @@
+[
+  {
+    "id": "forest",
+    "name": "Лес",
+    "danger": 1,
+    "glyph": "♣"
+  },
+  {
+    "id": "plains",
+    "name": "Равнины",
+    "danger": 1,
+    "glyph": "⌁"
+  },
+  {
+    "id": "desert",
+    "name": "Пустыня",
+    "danger": 2,
+    "glyph": "☼"
+  },
+  {
+    "id": "swamp",
+    "name": "Болото",
+    "danger": 3,
+    "glyph": "≈"
+  },
+  {
+    "id": "mountains",
+    "name": "Горы",
+    "danger": 3,
+    "glyph": "▲"
+  },
+  {
+    "id": "wastes",
+    "name": "Пустоши",
+    "danger": 4,
+    "glyph": "✦"
+  },
+  {
+    "id": "arcane",
+    "name": "Магические земли",
+    "danger": 5,
+    "glyph": "✧"
+  }
+]
