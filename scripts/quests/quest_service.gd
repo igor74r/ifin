@@ -2,7 +2,10 @@ extends Node
 var quests: Array[Dictionary] = [{"id":"first_hunt","title":"Первая охота","description":"Победите одного противника в любой точке мира.","target":1,"progress":0,"status":"active","reward_xp":60,"reward_gold":25,"claimed":false}]
 func _ready() -> void:
 	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string("res://data/quests/quests.json"))
-	if parsed is Array and not parsed.is_empty(): quests = parsed
+	if parsed is Array and not parsed.is_empty():
+		quests.clear()
+		for entry in parsed:
+			if entry is Dictionary: quests.append(entry)
 func on_enemy_defeated() -> void:
 	for q in quests:
 		if q.id == "first_hunt" and q.status == "active":
