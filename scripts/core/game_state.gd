@@ -41,7 +41,7 @@ func gain_xp(amount: int) -> void:
 		add_journal("Развитие","Новый уровень: %d. Получено 2 очка характеристик." % player.level)
 	Events.state_changed.emit()
 func serialize() -> Dictionary:
-	return {"version":SAVE_VERSION,"world_seed":world_seed,"player":player,"discovered_chunks":discovered_chunks,"poi_states":poi_states,"journal":journal,"defeated_poi":defeated_poi,"statistics":statistics,"inventory":Inventory.serialize(),"quests":Quests.serialize()}
+	return {"version":SAVE_VERSION,"world_seed":world_seed,"player":player,"discovered_chunks":discovered_chunks,"poi_states":poi_states,"journal":journal,"active_combat":active_combat,"defeated_poi":defeated_poi,"statistics":statistics,"inventory":Inventory.serialize(),"quests":Quests.serialize()}
 func apply_save(data: Dictionary) -> bool:
 	if int(data.get("version",-1)) != SAVE_VERSION: return false
 	if not data.get("player",null) is Dictionary: return false
