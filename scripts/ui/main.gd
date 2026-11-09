@@ -181,8 +181,9 @@ func _refresh_detail() -> void:
 				_add_text("%s — %s (%d/%d)" % [quest.title,quest.status,quest.progress,quest.target])
 				_add_text(quest.description)
 		"Способности":
-			_add_text("Удар: сила ×2 + уровень.")
-			_add_text("Защита: снижает входящий урон до трети.")
+			_add_text("Силовой удар: наносит двойной базовый урон и добавляет интеллект; стоимость — 10 маны.")
+			_add_text("Защита: снижает входящий урон до 35% и учитывает броню.")
+			_add_text("Оружие усиливает физический урон, броня уменьшает входящий урон.")
 			_add_action("Использовать малое зелье",_use_potion)
 		"Настройки":
 			_add_text("Seed мира: %d" % Game.world_seed)
@@ -294,11 +295,17 @@ func _show_combat_controls() -> void:
 	for child in detail_box.get_children(): child.queue_free()
 	_add_text("БОЙ: %s · здоровье %d/%d" % [Game.active_combat.get("enemy_name","Враг"),Game.active_combat.get("enemy_hp",0),Game.active_combat.get("enemy_hp_max",0)])
 	_add_action("Атаковать",_combat_attack)
+	_add_action("Силовой удар (10 маны)",_combat_power_strike)
 	_add_action("Защищаться",_combat_defend)
 	_add_action("Отступить",_combat_flee)
 
 func _combat_attack() -> void:
 	var result: Dictionary = Combat.player_attack()
+	_show_message(result.message)
+	_refresh_all()
+
+func _combat_power_strike() -> void:
+	var result: Dictionary = Combat.use_power_strike()
 	_show_message(result.message)
 	_refresh_all()
 
