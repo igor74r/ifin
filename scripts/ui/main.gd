@@ -1,6 +1,6 @@
 extends Control
 const MapScript = preload("res://scripts/ui/world_map.gd")
-var map_view: Control
+var map_view: WorldMapView
 var journal_box: RichTextLabel
 var status_label: Label
 var detail_box: VBoxContainer
