@@ -252,7 +252,7 @@ func _claim_cache(poi: Dictionary,chunk: Dictionary) -> void:
 	Game.player.gold += gold
 	Game.statistics.gold_earned += gold
 	Inventory.add_item("herb","Лесная трава","material",2,4)
-	Game.poi_states[poi.id] = true
+	Game.poi_states[poi.id] = "completed"
 	Game.add_journal("Находка","В тайнике найдено %d золота и материалы." % gold)
 	Game.gain_xp(20)
 	_refresh_all()
