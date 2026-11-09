@@ -220,7 +220,7 @@ func _show_poi(chunk: Dictionary) -> void:
 		return
 	_add_text("%s · опасность %d" % [poi.name,poi.danger])
 	_add_text(poi.description)
-	if Game.defeated_poi.has(poi.id) or Game.poi_states.get(poi.id,false):
+	if Game.defeated_poi.has(poi.id) or Game.poi_states.get(poi.id,"") in ["completed","bypassed"]:
 		_add_text("Эта точка уже исследована.")
 		return
 	match poi.action:
