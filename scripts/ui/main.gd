@@ -273,7 +273,7 @@ func _buy_potion(poi: Dictionary,chunk: Dictionary) -> void:
 		return
 	Game.player.gold -= 12
 	Inventory.add_item("potion_small","Малое зелье","consumable",1,12)
-	Game.poi_states[poi.id] = true
+	Game.poi_states[poi.id] = "completed"
 	Game.add_journal("Торговля","Куплено малое зелье за 12 золота.")
 	_refresh_all()
 	_show_poi(chunk)
