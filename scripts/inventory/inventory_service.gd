@@ -33,4 +33,7 @@ func serialize() -> Dictionary:
 	return {"items":items}
 func apply_save(data: Dictionary) -> void:
 	var loaded: Variant = data.get("items",null)
-	if loaded is Array: items = loaded
+	if loaded is Array:
+		items.clear()
+		for entry in loaded:
+			if entry is Dictionary: items.append(entry)
