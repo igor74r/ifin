@@ -44,7 +44,7 @@ func serialize() -> Dictionary:
 	return {"version":SAVE_VERSION,"world_seed":world_seed,"player":player,"discovered_chunks":discovered_chunks,"poi_states":poi_states,"journal":journal,"active_combat":active_combat,"defeated_poi":defeated_poi,"statistics":statistics,"inventory":Inventory.serialize(),"quests":Quests.serialize()}
 func apply_save(data: Dictionary) -> bool:
 	if int(data.get("version",-1)) != SAVE_VERSION: return false
-	if not data.get("player",null) is Dictionary: return false
+	if not (data.get("player",null) is Dictionary): return false
 	player = data.player
 	world_seed = int(data.get("world_seed",world_seed))
 	discovered_chunks = data.get("discovered_chunks",{})
